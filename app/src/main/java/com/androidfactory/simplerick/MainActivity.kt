@@ -13,13 +13,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.androidfactory.network.Character
 import com.androidfactory.network.KtorClient
 import com.androidfactory.network.TestFile
+import com.androidfactory.network.models.domain.Character
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
 import kotlinx.coroutines.delay
 
@@ -36,7 +35,7 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(key1 = Unit, block = {
                 delay(3000)
-                character = ktorClient.getCharacter(55)
+                character = ktorClient.getCharacter(25)
             })
 
             SimpleRickTheme {

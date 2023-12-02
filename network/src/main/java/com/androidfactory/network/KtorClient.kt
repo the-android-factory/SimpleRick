@@ -1,5 +1,8 @@
 package com.androidfactory.network
 
+import com.androidfactory.network.models.domain.Character
+import com.androidfactory.network.models.remote.RemoteCharacter
+import com.androidfactory.network.models.remote.toDomainCharacter
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.okhttp.OkHttp
@@ -29,18 +32,8 @@ class KtorClient {
     }
 
     suspend fun getCharacter(id: Int): Character {
-        return client.get("character/$id").body()
+        return client.get("character/$id")
+            .body<RemoteCharacter>()
+            .toDomainCharacter()
     }
-}
-
-@Serializable
-data class Character(
-    val id: Int,
-    val name: String,
-    val origin: Origin
-) {
-    @Serializable
-    data class Origin(
-        val name: String
-    )
 }
