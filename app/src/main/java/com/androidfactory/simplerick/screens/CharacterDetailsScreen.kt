@@ -33,7 +33,6 @@ import com.androidfactory.simplerick.components.character.CharacterDetailsNamePl
 import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.components.common.DataPointComponent
 import com.androidfactory.simplerick.ui.theme.RickAction
-import kotlinx.coroutines.delay
 
 @Composable
 fun CharacterDetailsScreen(
@@ -61,7 +60,6 @@ fun CharacterDetailsScreen(
     }
 
     LaunchedEffect(key1 = Unit, block = {
-        delay(500)
         ktorClient
             .getCharacter(characterId)
             .onSuccess {

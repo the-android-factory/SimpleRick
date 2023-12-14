@@ -13,7 +13,6 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.logging.SIMPLE
 import io.ktor.client.request.get
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 class KtorClient {
@@ -31,11 +30,15 @@ class KtorClient {
         }
     }
 
+    private var characterCache = mutableMapOf<Int, Character>()
+
     suspend fun getCharacter(id: Int): ApiOperation<Character> {
+        characterCache[id]?.let { return ApiOperation.Success(it) }
         return safeApiCall {
             client.get("character/$id")
                 .body<RemoteCharacter>()
                 .toDomainCharacter()
+                .also { characterCache[id] = it }
         }
     }
 
