@@ -9,19 +9,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.androidfactory.network.models.domain.CharacterStatus
+import com.androidfactory.simplerick.components.common.CharacterNameComponent
 import com.androidfactory.simplerick.ui.theme.RickAction
 
 @Composable
 fun CharacterDetailsNamePlateComponent(name: String, status: CharacterStatus) {
     Column(modifier = Modifier.fillMaxWidth()) {
         CharacterStatusComponent(characterStatus = status)
-        Text(
-            text = name,
-            fontSize = 42.sp,
-            lineHeight = 42.sp,
-            fontWeight = FontWeight.Bold,
-            color = RickAction
-        )
+        CharacterNameComponent(name = name)
     }
 }
 

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,8 +29,10 @@ import coil.compose.SubcomposeAsyncImage
 import com.androidfactory.network.KtorClient
 import com.androidfactory.network.models.domain.Character
 import com.androidfactory.simplerick.components.character.CharacterDetailsNamePlateComponent
+import com.androidfactory.simplerick.components.common.CharacterImage
 import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.components.common.DataPointComponent
+import com.androidfactory.simplerick.components.common.LoadingState
 import com.androidfactory.simplerick.ui.theme.RickAction
 
 @Composable
@@ -53,7 +54,7 @@ fun CharacterDetailsScreen(
                         add(DataPoint("Type", type))
                     }
                     add(DataPoint("Origin", character.origin.name))
-                    add(DataPoint("Episode count", character.episodeUrls.size.toString()))
+                    add(DataPoint("Episode count", character.episodeIds.size.toString()))
                 }
             }
         }
@@ -90,15 +91,7 @@ fun CharacterDetailsScreen(
 
         // Image
         item {
-            SubcomposeAsyncImage(
-                model = character!!.imageUrl,
-                contentDescription = "Character image",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(1f)
-                    .clip(RoundedCornerShape(12.dp)),
-                loading = { LoadingState() }
-            )
+            CharacterImage(imageUrl = character!!.imageUrl)
         }
 
         // Data points
@@ -134,14 +127,4 @@ fun CharacterDetailsScreen(
 
         item { Spacer(modifier = Modifier.height(64.dp)) }
     }
-}
-
-@Composable
-private fun LoadingState() {
-    CircularProgressIndicator(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(all = 128.dp),
-        color = RickAction
-    )
 }
