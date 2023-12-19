@@ -52,8 +52,8 @@ class KtorClient {
 }
 
 sealed interface ApiOperation<T> {
-    data class Success<T>(val data: T): ApiOperation<T>
-    data class Failure<T>(val exception: Exception): ApiOperation<T>
+    data class Success<T>(val data: T) : ApiOperation<T>
+    data class Failure<T>(val exception: Exception) : ApiOperation<T>
 
     fun onSuccess(block: (T) -> Unit): ApiOperation<T> {
         if (this is Success) block(data)
