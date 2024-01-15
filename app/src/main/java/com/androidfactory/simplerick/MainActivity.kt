@@ -55,11 +55,15 @@ import com.androidfactory.simplerick.ui.theme.RickAction
 import com.androidfactory.simplerick.ui.theme.RickPrimary
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val ktorClient = KtorClient()
+    @Inject
+    lateinit var ktorClient: KtorClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
