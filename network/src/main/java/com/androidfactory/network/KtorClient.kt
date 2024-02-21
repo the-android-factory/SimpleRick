@@ -22,14 +22,23 @@ class KtorClient {
     private val client = HttpClient(OkHttp) {
         defaultRequest { url("https://rickandmortyapi.com/api/") }
 
-        install(Logging) {
-            logger = Logger.SIMPLE
-        }
-
         install(ContentNegotiation) {
             json(Json {
                 ignoreUnknownKeys = true
             })
+
+        }
+
+        engine {
+            val loggingInterceptor = HttpLoggingInterceptor()
+            loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+            addInterceptor(loggingInterceptor)
+
+
+        }
+
+        install(HttpTimeout) {
+            connectTimeoutMillis = 10000
         }
     }
 
