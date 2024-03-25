@@ -1,10 +1,13 @@
 package com.androidfactory.network
 
 import com.androidfactory.network.models.domain.Character
+import com.androidfactory.network.models.domain.CharacterPage
 import com.androidfactory.network.models.domain.Episode
 import com.androidfactory.network.models.remote.RemoteCharacter
+import com.androidfactory.network.models.remote.RemoteCharacterPage
 import com.androidfactory.network.models.remote.RemoteEpisode
 import com.androidfactory.network.models.remote.toDomainCharacter
+import com.androidfactory.network.models.remote.toDomainCharacterPage
 import com.androidfactory.network.models.remote.toDomainEpisode
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -42,6 +45,14 @@ class KtorClient {
                 .body<RemoteCharacter>()
                 .toDomainCharacter()
                 .also { characterCache[id] = it }
+        }
+    }
+
+    suspend fun getCharacterByPage(pageNumber: Int): ApiOperation<CharacterPage> {
+        return safeApiCall {
+            client.get("character/?page=$pageNumber")
+                .body<RemoteCharacterPage>()
+                .toDomainCharacterPage()
         }
     }
 

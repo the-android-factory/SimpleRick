@@ -51,6 +51,7 @@ import com.androidfactory.simplerick.components.common.LoadingState
 import com.androidfactory.simplerick.components.episode.EpisodeRowComponent
 import com.androidfactory.simplerick.screens.CharacterDetailsScreen
 import com.androidfactory.simplerick.screens.CharacterEpisodeScreen
+import com.androidfactory.simplerick.screens.HomeScreen
 import com.androidfactory.simplerick.ui.theme.RickAction
 import com.androidfactory.simplerick.ui.theme.RickPrimary
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
@@ -77,7 +78,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = RickPrimary
                 ) {
-                    NavHost(navController = navController, startDestination = "character_details") {
+                    NavHost(navController = navController, startDestination = "home_screen") {
+                        composable(route = "home_screen") {
+                            HomeScreen(onCharacterSelected = {
+                                // todo navigate
+                            })
+                        }
                         composable(route = "character_details") {
                             CharacterDetailsScreen(
                                 characterId = 4
