@@ -8,10 +8,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidfactory.network.models.domain.CharacterStatus
+import com.androidfactory.simplerick.R
+import com.androidfactory.simplerick.ui.text.stringResource
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
 
@@ -28,7 +31,7 @@ fun CharacterStatusComponent(characterStatus: CharacterStatus) {
             .padding(horizontal = 12.dp, vertical = 4.dp)
     ) {
         Text(
-            text = "Status: ${characterStatus.displayName}",
+            text = "Status: ${stringResource(characterStatus.stringResource())}",
             fontSize = 20.sp,
             color = RickTextPrimary
         )

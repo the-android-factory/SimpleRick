@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Simple Rick</string>
+    <string name="character_status_dead">Dead</string>
+    <string name="character_status_alive">Alive</string>
+    <string name="character_status_unknown">Unknown</string>
+    <string name="character_gender_male">Male</string>
+    <string name="character_gender_female">Female</string>
+    <string name="character_gender_unspecified">No Gender</string>
+    <string name="character_gender_unknown">Unknown</string>
 </resources>
