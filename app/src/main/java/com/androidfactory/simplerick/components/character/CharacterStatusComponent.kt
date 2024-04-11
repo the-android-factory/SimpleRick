@@ -13,8 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.androidfactory.network.models.domain.CharacterStatus
-import com.androidfactory.simplerick.R
-import com.androidfactory.simplerick.ui.text.stringResource
+import com.androidfactory.simplerick.ui.text.displayNameResource
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
 
@@ -31,7 +30,7 @@ fun CharacterStatusComponent(characterStatus: CharacterStatus) {
             .padding(horizontal = 12.dp, vertical = 4.dp)
     ) {
         Text(
-            text = "Status: ${stringResource(characterStatus.stringResource())}",
+            text = "Status: ${stringResource(characterStatus.displayNameResource())}",
             fontSize = 20.sp,
             color = RickTextPrimary
         )

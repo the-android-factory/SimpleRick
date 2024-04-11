@@ -6,7 +6,7 @@ import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.repositories.CharacterRepository
 import com.androidfactory.simplerick.screens.CharacterDetailsViewState
 import com.androidfactory.simplerick.ui.text.UiText
-import com.androidfactory.simplerick.ui.text.stringResource
+import com.androidfactory.simplerick.ui.text.displayNameResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -29,7 +29,7 @@ class CharacterDetailsViewModel @Inject constructor(
             val dataPoints = buildList {
                 add(DataPoint("Last known location", UiText.DynamicText(character.location.name)))
                 add(DataPoint("Species", UiText.DynamicText(character.species)))
-                add(DataPoint("Gender", UiText.StringResource(character.gender.stringResource())))
+                add(DataPoint("Gender", UiText.StringResource(character.gender.displayNameResource())))
                 character.type.takeIf { it.isNotEmpty() }?.let { type ->
                     add(DataPoint("Type", UiText.DynamicText(type)))
                 }
