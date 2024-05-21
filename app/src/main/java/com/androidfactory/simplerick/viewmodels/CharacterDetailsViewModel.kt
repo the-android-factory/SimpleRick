@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.repositories.CharacterRepository
 import com.androidfactory.simplerick.screens.CharacterDetailsViewState
+import com.androidfactory.simplerick.ui.text.UiText
+import com.androidfactory.simplerick.ui.text.displayNameResource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,14 +27,14 @@ class CharacterDetailsViewModel @Inject constructor(
         _internalStorageFlow.update { return@update CharacterDetailsViewState.Loading }
         characterRepository.fetchCharacter(characterId).onSuccess { character ->
             val dataPoints = buildList {
-                add(DataPoint("Last known location", character.location.name))
-                add(DataPoint("Species", character.species))
-                add(DataPoint("Gender", character.gender.displayName))
+                add(DataPoint("Last known location", UiText.DynamicText(character.location.name)))
+                add(DataPoint("Species", UiText.DynamicText(character.species)))
+                add(DataPoint("Gender", UiText.StringResource(character.gender.displayNameResource())))
                 character.type.takeIf { it.isNotEmpty() }?.let { type ->
-                    add(DataPoint("Type", type))
+                    add(DataPoint("Type", UiText.DynamicText(type)))
                 }
-                add(DataPoint("Origin", character.origin.name))
-                add(DataPoint("Episode count", character.episodeIds.size.toString()))
+                add(DataPoint("Origin", UiText.DynamicText(character.origin.name)))
+                add(DataPoint("Episode count", UiText.DynamicText(character.episodeIds.size.toString())))
             }
             _internalStorageFlow.update {
                 return@update CharacterDetailsViewState.Success(

@@ -2,8 +2,8 @@ package com.androidfactory.network.models.domain
 
 import androidx.compose.ui.graphics.Color
 
-sealed class CharacterStatus(val displayName: String, val color: Color) {
-    object Alive: CharacterStatus("Alive", Color.Green)
-    object Dead: CharacterStatus("Dead", Color.Red)
-    object Unknown: CharacterStatus("Unknown", Color.Yellow)
+sealed class CharacterStatus(val color: Color) {
+    object Alive: CharacterStatus(Color.Green)
+    object Dead: CharacterStatus(Color.Red)
+    object Unknown: CharacterStatus(Color.Yellow)
 }
