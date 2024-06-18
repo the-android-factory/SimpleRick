@@ -52,9 +52,15 @@ class MainActivity : ComponentActivity() {
                         ) { backStackEntry ->
                             val characterId: Int =
                                 backStackEntry.arguments?.getInt("characterId") ?: -1
-                            CharacterDetailsScreen(characterId = characterId) {
-                                navController.navigate("character_episodes/$it")
-                            }
+                            CharacterDetailsScreen(
+                                characterId = characterId,
+                                onEpisodeClicked = {
+                                    navController.navigate("character_episodes/$it")
+                                },
+                                onBackClicked = {
+                                    navController.navigateUp()
+                                }
+                            )
                         }
                         composable(
                             route = "character_episodes/{characterId}",
@@ -66,7 +72,8 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getInt("characterId") ?: -1
                             CharacterEpisodeScreen(
                                 characterId = characterId,
-                                ktorClient = ktorClient
+                                ktorClient = ktorClient,
+                                onBackClicked = { navController.navigateUp() }
                             )
                         }
                     }
