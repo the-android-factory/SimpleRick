@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.androidfactory.network.models.domain.CharacterStatus
+import com.androidfactory.simplerick.utils.asColor
 
 @Composable
 fun CharacterStatusCircle(status: CharacterStatus, modifier: Modifier = Modifier) {
@@ -30,7 +31,7 @@ fun CharacterStatusCircle(status: CharacterStatus, modifier: Modifier = Modifier
         Box(
             modifier = Modifier
                 .size(8.dp)
-                .background(color = status.color, shape = CircleShape)
+                .background(color = status.asColor(), shape = CircleShape)
         )
     }
 }

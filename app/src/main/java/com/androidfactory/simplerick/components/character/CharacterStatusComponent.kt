@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import com.androidfactory.network.models.domain.CharacterStatus
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
+import com.androidfactory.simplerick.utils.asColor
 
 @Composable
 fun CharacterStatusComponent(characterStatus: CharacterStatus) {
@@ -22,7 +23,7 @@ fun CharacterStatusComponent(characterStatus: CharacterStatus) {
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = characterStatus.color,
+                color = characterStatus.asColor(),
                 shape = RoundedCornerShape(12.dp)
             )
             .padding(horizontal = 12.dp, vertical = 4.dp)
