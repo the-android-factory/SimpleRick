@@ -1,0 +1,65 @@
+[versions]
+minSdk = "26"
+compileSdk = "34"
+
+coilComposeVersion = "2.5.0"
+ktorVersion = "2.3.6"
+agpVersion = "8.3.2"
+kotlinVersion = "1.8.10"
+composeBomVersion = "2024.06.00"
+navVersion = "2.7.7"
+activityComposeVersion = "1.9.0"
+coreKtxVersion = "1.13.1"
+lifecycleRuntimeKtxVersion = "2.8.2"
+
+espressoCoreVersion = "3.5.1"
+junit = "1.1.5"
+junitVersion = "4.13.2"
+
+[libraries]
+# Coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
+
+# Android
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
+navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navVersion" }
+
+# Ktor
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktorVersion" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktorVersion" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktorVersion" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktorVersion" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktorVersion" }
+
+# Compose
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBomVersion" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4" }
+compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+
+# Testing
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCoreVersion" }
+ext-junit = { module = "androidx.test.ext:junit", version.ref = "junit" }
+junit = { module = "junit:junit", version.ref = "junitVersion" }
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agpVersion" }
+android-application = { id = "com.android.application", version.ref = "agpVersion" }
+
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlinVersion" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinVersion" }
+
+[bundles]
+compose = [
+    "compose-ui", "compose-ui-graphics", "compose-ui-tooling-preview", "compose-material3"
+]
+ktor = [
+    "ktor-client-core", "ktor-client-okhttp", "ktor-client-logging",
+    "ktor-client-content-negotiation", "ktor-serialization-kotlinx-json"
+]
