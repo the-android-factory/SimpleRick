@@ -37,6 +37,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.androidfactory.network.KtorClient
+import com.androidfactory.simplerick.screens.AllEpisodesScreen
 import com.androidfactory.simplerick.screens.CharacterDetailsScreen
 import com.androidfactory.simplerick.screens.CharacterEpisodeScreen
 import com.androidfactory.simplerick.screens.HomeScreen
@@ -133,9 +134,11 @@ class MainActivity : ComponentActivity() {
                 .padding(innerPadding)
         ) {
             composable(route = "home_screen") {
-                HomeScreen(onCharacterSelected = { characterId ->
-                    navController.navigate("character_details/$characterId")
-                })
+                HomeScreen(
+                    onCharacterSelected = { characterId ->
+                        navController.navigate("character_details/$characterId")
+                    }
+                )
             }
             composable(
                 route = "character_details/{characterId}",
@@ -147,12 +150,8 @@ class MainActivity : ComponentActivity() {
                     backStackEntry.arguments?.getInt("characterId") ?: -1
                 CharacterDetailsScreen(
                     characterId = characterId,
-                    onEpisodeClicked = {
-                        navController.navigate("character_episodes/$it")
-                    },
-                    onBackClicked = {
-                        navController.navigateUp()
-                    }
+                    onEpisodeClicked = { navController.navigate("character_episodes/$it") },
+                    onBackClicked = { navController.navigateUp() }
                 )
             }
             composable(
@@ -172,10 +171,8 @@ class MainActivity : ComponentActivity() {
             composable(route = NavDestination.Episodes.route) {
                 Column(
                     modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Episodes", fontSize = 62.sp, color = Color.White)
+                    AllEpisodesScreen()
                 }
             }
             composable(route = NavDestination.Search.route) {
