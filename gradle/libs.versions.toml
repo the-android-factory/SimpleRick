@@ -6,7 +6,7 @@ coilComposeVersion = "2.5.0"
 ktorVersion = "2.3.6"
 agpVersion = "8.3.2"
 kotlinVersion = "1.8.10"
-composeBomVersion = "2024.06.00"
+composeBomVersion = "2024.09.03"
 navVersion = "2.7.7"
 activityComposeVersion = "1.9.0"
 coreKtxVersion = "1.13.1"
@@ -39,6 +39,7 @@ compose-ui = { module = "androidx.compose.ui:ui" }
 compose-ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
+compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-test-junit = { module = "androidx.compose.ui:ui-test-junit4" }
 compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
@@ -57,7 +58,7 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 
 [bundles]
 compose = [
-    "compose-ui", "compose-ui-graphics", "compose-ui-tooling-preview", "compose-material3"
+    "compose-ui", "compose-ui-graphics", "compose-ui-tooling-preview", "compose-material3", "compose-foundation"
 ]
 ktor = [
     "ktor-client-core", "ktor-client-okhttp", "ktor-client-logging",

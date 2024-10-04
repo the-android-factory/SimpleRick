@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -41,6 +38,7 @@ import com.androidfactory.simplerick.screens.AllEpisodesScreen
 import com.androidfactory.simplerick.screens.CharacterDetailsScreen
 import com.androidfactory.simplerick.screens.CharacterEpisodeScreen
 import com.androidfactory.simplerick.screens.HomeScreen
+import com.androidfactory.simplerick.screens.SearchScreen
 import com.androidfactory.simplerick.ui.theme.RickAction
 import com.androidfactory.simplerick.ui.theme.RickPrimary
 import com.androidfactory.simplerick.ui.theme.SimpleRickTheme
@@ -176,13 +174,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
             composable(route = NavDestination.Search.route) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Search", fontSize = 62.sp, color = Color.White)
-                }
+                SearchScreen()
             }
         }
     }
