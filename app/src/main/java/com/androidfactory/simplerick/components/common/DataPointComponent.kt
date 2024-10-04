@@ -19,13 +19,13 @@ fun DataPointComponent(dataPoint: DataPoint) {
     Column {
         Text(
             text = dataPoint.title,
-            fontSize = 14.sp,
+            fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             color = RickAction
         )
         Text(
             text = dataPoint.description,
-            fontSize = 24.sp,
+            fontSize = 18.sp,
             color = RickTextPrimary
         )
     }

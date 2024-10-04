@@ -76,7 +76,7 @@ fun CharacterListItem(
                         verticalArrangement = Arrangement.Center,
                         modifier = Modifier.padding(end = 16.dp)
                     ) {
-                        DataPointComponent(dataPoint = sanitizeDataPoint(dataPoint))
+                        DataPointComponent(dataPoint = dataPoint)
                     }
                 }
             })
