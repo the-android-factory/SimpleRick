@@ -4,52 +4,71 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
+import com.androidfactory.simplerick.components.character.CharacterListItem
+import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.components.common.SimpleToolbar
 import com.androidfactory.simplerick.ui.theme.RickAction
 import com.androidfactory.simplerick.ui.theme.RickPrimary
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
-import javax.inject.Inject
+import com.androidfactory.simplerick.viewmodels.SearchViewModel
 
 @Composable
 fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
+
+    DisposableEffect(key1 = Unit) {
+        val job = searchViewModel.observeUserSearch()
+        onDispose { job.cancel() }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
         SimpleToolbar(title = "Search")
+
+        val screenState by searchViewModel.uiState.collectAsStateWithLifecycle()
+
+        AnimatedVisibility(visible = screenState is SearchViewModel.ScreenState.Searching) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .height(4.dp)
+                    .fillMaxWidth(),
+                color = RickAction
+            )
+        }
 
         Row(
             modifier = Modifier
@@ -88,30 +107,88 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
             }
         }
 
-        val searchText by searchViewModel.searchTextState.collectAsStateWithLifecycle()
-        Text(
-            text = searchText,
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(32.dp),
-            textAlign = TextAlign.Center,
-            fontSize = 26.sp
-        )
+        when (val state = screenState) {
+            SearchViewModel.ScreenState.Empty -> {
+                Text(
+                    text = "Search for characters!",
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 26.sp
+                )
+            }
+            SearchViewModel.ScreenState.Searching -> {}
+            is SearchViewModel.ScreenState.Error -> {
+                Text(
+                    text = state.message,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 26.sp
+                )
+
+                Button(
+                    colors = ButtonDefaults.buttonColors().copy(containerColor = RickAction),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 84.dp),
+                    onClick = { searchViewModel.searchTextFieldState.clearText() }
+                ) {
+                    Text(text = "Clear search", color = RickPrimary)
+                }
+            }
+            is SearchViewModel.ScreenState.Content -> SearchScreenContent(content = state)
+        }
     }
 }
 
-@HiltViewModel
-class SearchViewModel @Inject constructor() : ViewModel() {
-    val searchTextFieldState = TextFieldState()
-
-    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-    val searchTextState = snapshotFlow { searchTextFieldState.text }
-        .debounce(500)
-        .mapLatest { if (it.isBlank()) "Awaiting your command ..." else it.toString() }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 2000),
-            initialValue = ""
+@Composable
+private fun SearchScreenContent(content: SearchViewModel.ScreenState.Content) {
+    Text(
+        text = "${content.results.size} results for '${content.userQuery}'",
+        color = Color.White,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(6.dp),
+        textAlign = TextAlign.Center,
+        fontSize = 22.sp
+    )
+    Box {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp, top = 8.dp)
+        ) {
+            items(content.results) { character ->
+                val dataPoints = buildList {
+                    add(DataPoint("Last known location", character.location.name))
+                    add(DataPoint("Species", character.species))
+                    add(DataPoint("Gender", character.gender.displayName))
+                    character.type.takeIf { it.isNotEmpty() }?.let { type ->
+                        add(DataPoint("Type", type))
+                    }
+                    add(DataPoint("Origin", character.origin.name))
+                    add(DataPoint("Episode count", character.episodeIds.size.toString()))
+                }
+                CharacterListItem(
+                    character = character,
+                    characterDataPoints = dataPoints,
+                    onClick = {
+                        // todo
+                    }
+                )
+            }
+        }
+        Spacer(
+            modifier = Modifier
+                .height(8.dp)
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.verticalGradient(colors = listOf(RickPrimary, Color.Transparent))
+                )
         )
+    }
 }
