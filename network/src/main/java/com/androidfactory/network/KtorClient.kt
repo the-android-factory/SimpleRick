@@ -90,7 +90,7 @@ class KtorClient {
                     exception = error
                 }
 
-                if (exception == null) { return@onSuccess }
+                if (exception != null) { return@onSuccess }
             }
         }.onFailure {
             exception = it
@@ -149,7 +149,7 @@ class KtorClient {
                     exception = error
                 }
 
-                if (exception == null) { return@onSuccess }
+                if (exception != null) { return@onSuccess }
             }
         }.onFailure {
             exception = it
