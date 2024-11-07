@@ -5,11 +5,11 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.androidfactory.network.models.domain.Character
+import com.androidfactory.network.models.domain.CharacterStatus
 import com.androidfactory.simplerick.repositories.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -29,18 +29,24 @@ class SearchViewModel @Inject constructor(
     val searchTextFieldState = TextFieldState()
 
     sealed interface SearchState {
-        object Empty: SearchState
-        data class UserQuery(val query: String): SearchState
+        object Empty : SearchState
+        data class UserQuery(val query: String) : SearchState
     }
 
     sealed interface ScreenState {
-        object Empty: ScreenState
-        object Searching: ScreenState
-        data class Error(val message: String): ScreenState
+        object Empty : ScreenState
+        object Searching : ScreenState
+        data class Error(val message: String) : ScreenState
         data class Content(
             val userQuery: String,
-            val results: List<Character>
-        ): ScreenState
+            val results: List<Character>,
+            val filterState: FilterState
+        ) : ScreenState {
+            data class FilterState(
+                val statuses: List<CharacterStatus>,
+                val selectedStatuses: List<CharacterStatus>
+            )
+        }
     }
 
     private val _uiState = MutableStateFlow<ScreenState>(ScreenState.Empty)
@@ -65,14 +71,34 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    fun toggleStatus(status: CharacterStatus) {
+        _uiState.update {
+            val currentState = (it as? ScreenState.Content) ?: return@update it
+            val currentSelectedStatuses = currentState.filterState.selectedStatuses
+            val newStatuses = if (currentSelectedStatuses.contains(status)) {
+                currentSelectedStatuses - status
+            } else {
+                currentSelectedStatuses + status
+            }
+            return@update currentState.copy(
+                filterState = currentState.filterState.copy(selectedStatuses = newStatuses)
+            )
+        }
+    }
+
     private fun searchAllCharacters(query: String) = viewModelScope.launch {
         _uiState.update { ScreenState.Searching }
-        delay(4000)
         characterRepository.fetchAllCharactersByName(searchQuery = query).onSuccess { characters ->
+            val allStatuses =
+                characters.map { it.status }.toSet().toList().sortedBy { it.displayName }
             _uiState.update {
                 ScreenState.Content(
                     userQuery = query,
-                    results = characters
+                    results = characters,
+                    filterState = ScreenState.Content.FilterState(
+                        statuses = allStatuses,
+                        selectedStatuses = allStatuses
+                    )
                 )
             }
         }.onFailure { exception ->

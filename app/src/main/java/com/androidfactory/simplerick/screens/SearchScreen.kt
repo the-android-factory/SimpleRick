@@ -2,6 +2,7 @@ package com.androidfactory.simplerick.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.androidfactory.network.models.domain.CharacterStatus
 import com.androidfactory.simplerick.components.character.CharacterListItem
 import com.androidfactory.simplerick.components.common.DataPoint
 import com.androidfactory.simplerick.components.common.SimpleToolbar
@@ -73,7 +76,7 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -119,6 +122,7 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
                     fontSize = 26.sp
                 )
             }
+
             SearchViewModel.ScreenState.Searching -> {}
             is SearchViewModel.ScreenState.Error -> {
                 Text(
@@ -141,28 +145,41 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
                     Text(text = "Clear search", color = RickPrimary)
                 }
             }
-            is SearchViewModel.ScreenState.Content -> SearchScreenContent(content = state)
+
+            is SearchViewModel.ScreenState.Content -> SearchScreenContent(
+                content = state,
+                onStatusClicked = searchViewModel::toggleStatus
+            )
         }
     }
 }
 
 @Composable
-private fun SearchScreenContent(content: SearchViewModel.ScreenState.Content) {
+private fun SearchScreenContent(
+    content: SearchViewModel.ScreenState.Content,
+    onStatusClicked: (CharacterStatus) -> Unit
+) {
     Text(
         text = "${content.results.size} results for '${content.userQuery}'",
         color = Color.White,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(6.dp),
-        textAlign = TextAlign.Center,
-        fontSize = 22.sp
+        modifier = Modifier.padding(start = 16.dp, bottom = 4.dp),
+        fontSize = 14.sp
     )
+
+    StatusFilterRow(content, onStatusClicked)
+
     Box {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp, top = 8.dp)
         ) {
-            items(content.results) { character ->
+            val filteredResults = content.results.filter { character ->
+                content.filterState.selectedStatuses.contains(character.status)
+            }
+            items(
+                items = filteredResults,
+                key = { character -> character.id }
+            ) { character ->
                 val dataPoints = buildList {
                     add(DataPoint("Last known location", character.location.name))
                     add(DataPoint("Species", character.species))
@@ -178,7 +195,8 @@ private fun SearchScreenContent(content: SearchViewModel.ScreenState.Content) {
                     characterDataPoints = dataPoints,
                     onClick = {
                         // todo
-                    }
+                    },
+                    modifier = Modifier.animateItem()
                 )
             }
         }
@@ -190,5 +208,50 @@ private fun SearchScreenContent(content: SearchViewModel.ScreenState.Content) {
                     brush = Brush.verticalGradient(colors = listOf(RickPrimary, Color.Transparent))
                 )
         )
+    }
+}
+
+@Composable
+private fun StatusFilterRow(
+    content: SearchViewModel.ScreenState.Content,
+    onStatusClicked: (CharacterStatus) -> Unit
+) {
+    Row(
+        modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        content.filterState.statuses.forEach { status ->
+            val isSelected = content.filterState.selectedStatuses.contains(status)
+            val contentColor = if (isSelected) RickAction else Color.LightGray
+            val count = content.results.filter { it.status == status }.size
+            Row(
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = contentColor,
+                        shape = RoundedCornerShape(8.dp)
+                    )
+                    .clickable {
+                        onStatusClicked(status)
+                    }
+                    .clip(RoundedCornerShape(8.dp)),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = count.toString(),
+                    color = RickPrimary,
+                    modifier = Modifier
+                        .background(color = contentColor)
+                        .padding(4.dp),
+                    textAlign = TextAlign.Center
+                )
+                Text(
+                    text = status.displayName,
+                    color = contentColor,
+                    modifier = Modifier.padding(horizontal = 6.dp),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
     }
 }
