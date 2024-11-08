@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -50,7 +51,10 @@ import com.androidfactory.simplerick.ui.theme.RickPrimary
 import com.androidfactory.simplerick.viewmodels.SearchViewModel
 
 @Composable
-fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(
+    onCharacterClicked: (Int) -> Unit,
+    searchViewModel: SearchViewModel = hiltViewModel()
+) {
 
     DisposableEffect(key1 = Unit) {
         val job = searchViewModel.observeUserSearch()
@@ -148,7 +152,8 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
 
             is SearchViewModel.ScreenState.Content -> SearchScreenContent(
                 content = state,
-                onStatusClicked = searchViewModel::toggleStatus
+                onStatusClicked = searchViewModel::toggleStatus,
+                onCharacterClicked = { onCharacterClicked(it) }
             )
         }
     }
@@ -157,7 +162,8 @@ fun SearchScreen(searchViewModel: SearchViewModel = hiltViewModel()) {
 @Composable
 private fun SearchScreenContent(
     content: SearchViewModel.ScreenState.Content,
-    onStatusClicked: (CharacterStatus) -> Unit
+    onStatusClicked: (CharacterStatus) -> Unit,
+    onCharacterClicked: (Int) -> Unit
 ) {
     Text(
         text = "${content.results.size} results for '${content.userQuery}'",
@@ -171,7 +177,8 @@ private fun SearchScreenContent(
     Box {
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp, top = 8.dp)
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp, top = 8.dp),
+            modifier = Modifier.clipToBounds()
         ) {
             val filteredResults = content.results.filter { character ->
                 content.filterState.selectedStatuses.contains(character.status)
@@ -193,9 +200,7 @@ private fun SearchScreenContent(
                 CharacterListItem(
                     character = character,
                     characterDataPoints = dataPoints,
-                    onClick = {
-                        // todo
-                    },
+                    onClick = { onCharacterClicked(character.id) },
                     modifier = Modifier.animateItem()
                 )
             }
