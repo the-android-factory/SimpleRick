@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,29 +41,48 @@ import com.androidfactory.simplerick.ui.theme.RickPrimary
 import com.androidfactory.simplerick.ui.theme.RickTextPrimary
 import kotlinx.coroutines.launch
 
+sealed interface ScreenState {
+    object Loading : ScreenState
+    data class Success(val character: Character, val episodes: List<Episode>) : ScreenState
+    data class Error(val message: String) : ScreenState
+}
+
 @Composable
 fun CharacterEpisodeScreen(characterId: Int, ktorClient: KtorClient, onBackClicked: () -> Unit) {
-    var characterState by remember { mutableStateOf<Character?>(null) }
-    var episodesState by remember { mutableStateOf<List<Episode>>(emptyList()) }
+    var screenState by remember { mutableStateOf<ScreenState>(ScreenState.Loading) }
 
     LaunchedEffect(key1 = Unit, block = {
         ktorClient.getCharacter(characterId).onSuccess { character ->
-            characterState = character
             launch {
                 ktorClient.getEpisodes(character.episodeIds).onSuccess { episodes ->
-                    episodesState = episodes
+                    screenState = ScreenState.Success(character, episodes)
                 }.onFailure {
-                    // todo handle this later
+                    screenState = ScreenState.Error(message = "Whoops, something went wrong")
                 }
             }
         }.onFailure {
-            // todo handle this later
+            screenState = ScreenState.Error(message = "Whoops, something went wrong")
         }
     })
 
-    characterState?.let { character ->
-        MainScreen(character = character, episodes = episodesState, onBackClicked)
-    } ?: LoadingState()
+    when (val state = screenState) {
+        ScreenState.Loading -> LoadingState()
+        is ScreenState.Error -> Text(
+            text = state.message,
+            color = Color.White,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(32.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 26.sp
+        )
+
+        is ScreenState.Success -> MainScreen(
+            character = state.character,
+            episodes = state.episodes,
+            onBackClicked = onBackClicked
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
